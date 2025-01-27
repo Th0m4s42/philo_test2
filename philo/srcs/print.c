@@ -24,6 +24,7 @@ void	print_action(t_philo *philo, char *action)
 	}
 	pthread_mutex_unlock(&philo->info->death_mutex);
 	pthread_mutex_lock(&philo->info->print_mutex);
+
 	time = get_time_ms() - philo->info->time_start;
 	printf("%zu %d %s\n", time, philo->id, action);
 	pthread_mutex_unlock(&philo->info->print_mutex);

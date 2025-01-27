@@ -1,7 +1,7 @@
 NAME	:= philo
 CC		:= cc
-FLAGS	:= -Wall -Werror -Wextra -g3 -fsanitize=thread -pthread
-# FLAGS	:= -Wall -Werror -Wextra -g3 -pthread
+# FLAGS	:= -Wall -Werror -Wextra -g3 -fsanitize=thread -pthread
+FLAGS	:= -Wall -Werror -Wextra -g3 -pthread
 
 Black	:= \033[0;30m
 Red		:= \033[0;31m

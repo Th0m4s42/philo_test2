@@ -16,10 +16,15 @@ static bool	grab_forks(pthread_mutex_t *m1, pthread_mutex_t *m2 , t_philo *philo
 {
 	if(check_death(philo) == true)
 		return (false);
-	if (philo->id % 2 == 1)
+	if (philo->id % 2 == 0)
 	{
 		pthread_mutex_lock(m2);
 		print_action(philo, "has taken a fork");
+		if (check_death(philo) == true)
+		{
+			pthread_mutex_unlock(m2);
+			return (false);
+		}
 		pthread_mutex_lock(m1);
 		print_action(philo, "has taken a fork");
 	}
@@ -27,25 +32,14 @@ static bool	grab_forks(pthread_mutex_t *m1, pthread_mutex_t *m2 , t_philo *philo
 	{
 		pthread_mutex_lock(m1);
 		print_action(philo, "has taken a fork");
+		if (check_death(philo) == true)
+		{
+			pthread_mutex_unlock(m1);
+			return (false);
+		}
 		pthread_mutex_lock(m2);
 		print_action(philo, "has taken a fork");
 	}
-	// if(m1 < m2)
-	// {
-	// 	pthread_mutex_lock(m1);
-	// 	print_action(philo, "has taken a fork");
-	// 	pthread_mutex_lock(m2);
-	// 	print_action(philo, "has taken a fork");
-	// 	// printf("%zu \n", get_time_ms() - philo->last_meal);
-	// }
-	// else
-	// {
-	// 	pthread_mutex_lock(m2);
-	// 	print_action(philo, "has taken a fork");
-	// 	pthread_mutex_lock(m1);
-	// 	print_action(philo, "has taken a fork");
-	// 	// printf("%zu \n", get_time_ms() - philo->last_meal);
-	// }
 	return (true);
 }
 
@@ -61,10 +55,19 @@ static bool	try_to_eat(t_philo *philo)
 	}
 	print_action(philo, "is eating");
 	philo->last_meal = get_time_ms();
-	philo->meal_count++;
-	ft_sleep(philo, philo->info->time_to_eat);
+	if (ft_sleep(philo, philo->info->time_to_eat) == false)
+	{
+		pthread_mutex_unlock(&philo->fork);
+		pthread_mutex_unlock(&philo->next->fork);
+		return (false);
+	}
 	pthread_mutex_unlock(&philo->fork);
 	pthread_mutex_unlock(&philo->next->fork);
+	pthread_mutex_lock(&philo->meal_mutex);
+	philo->meal_count++;
+	pthread_mutex_unlock(&philo->meal_mutex);
+	if (check_exit(philo) == true)
+		return (false);
 	return (true);
 }
 
@@ -74,27 +77,30 @@ static bool	solo_philo(t_philo *philo)
 	{
 		pthread_mutex_lock(&philo->fork);
 		print_action(philo, "has taken a fork");
-		if (ft_sleep(philo, philo->info->time_to_death) == false)
-		{
-			pthread_mutex_unlock(&philo->fork);
-			return (true);
-		}
+		ft_sleep(philo, philo->info->time_to_death);
+		try_to_eat(philo);
 		pthread_mutex_unlock(&philo->fork);
 		return (true);
 	}
 	return (false);
 }
 
-void	kitkat(t_philo *philo)
+bool	kitkat(t_philo *philo)
 {
 	size_t	timer;
 
-	if (philo->info->nb_of_phi % 2 == 0)
-		return ;
 	timer = 0;
+
 	if (philo->info->time_to_eat > philo->info->time_to_sleep)
-		timer = philo->info->time_to_eat + 1 - philo->info->time_to_sleep - 2;
-	usleep((timer * 1000) + 2000);
+		timer = philo->info->time_to_eat - philo->info->time_to_sleep;
+	
+	if (philo->info->nb_of_phi % 2 == 1 && philo->id % 2 == 0)
+		timer*=2;
+	if (ft_sleep(philo, timer + 5) == false)
+		return (false);
+	
+	
+	return (true);
 }
 
 void	*routine(void *param)
@@ -105,10 +111,9 @@ void	*routine(void *param)
 	if (solo_philo(philo) == true)
 		return (NULL);
 	print_action(philo, "is thinking");
-	if (philo->id % 2 == 0)
-		usleep(500);
-	if (philo->info->nb_of_phi == philo->id)
-		usleep(philo->info->time_to_eat);
+	if (philo->id % 2 == 1)
+		usleep(1000);
+		// kitkat(philo);
 	while (1)
 	{
 		if (try_to_eat(philo) == false)
@@ -116,11 +121,13 @@ void	*routine(void *param)
 		if (check_death(philo) == true || check_all_ate(philo) == true)
 			break ;
 		print_action(philo, "is sleeping");
-		ft_sleep(philo, philo->info->time_to_sleep);
+		if (ft_sleep(philo, philo->info->time_to_sleep) == false || check_all_ate(philo) == true)
+			break;
 		print_action(philo, "is thinking");
-		if (check_death(philo) == true)
+		if (check_death(philo) == true || check_all_ate(philo) == true)
 			break ;
-		kitkat(philo);
+		if (kitkat(philo) == false || check_all_ate(philo) == true)
+			break ;
 	}
 	return (NULL);
 }

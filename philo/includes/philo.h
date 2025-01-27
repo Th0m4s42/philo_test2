@@ -31,7 +31,6 @@ typedef struct s_info
 	size_t			time_to_death;
 	size_t			time_to_eat;
 	size_t			time_to_sleep;
-	size_t			time_to_think;
 	int				nb_of_meal;
 	size_t			time_start;
 	pthread_mutex_t	print_mutex;

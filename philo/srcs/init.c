@@ -90,7 +90,6 @@ static t_info	*init_info(char **arg)
 	info->time_to_death = (size_t)ft_atol(arg[2]);
 	info->time_to_eat = (size_t)ft_atol(arg[3]);
 	info->time_to_sleep = (size_t)ft_atol(arg[4]);
-	info->time_to_think = info->time_to_eat;
 	if (arg[5] == NULL)
 		info->nb_of_meal = -1;
 	else
