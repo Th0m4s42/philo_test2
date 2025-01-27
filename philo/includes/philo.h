@@ -6,7 +6,7 @@
 /*   By: thbasse <thbasse@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 07:57:50 by thbasse           #+#    #+#             */
-/*   Updated: 2025/01/27 10:26:50 by thbasse          ###   ########.fr       */
+/*   Updated: 2025/01/27 23:55:48 by thbasse          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,10 @@ void	print_action(t_philo *philo, char *action);
 
 bool	intitialization(char **arg, t_info **info, t_philo **philos,
 			pthread_t **ids);
+
+/* *****************************init_utils*********************************** */
+
+void    free_linked_list(t_philo *first);
 
 /* *****************************main***************************************** */
 

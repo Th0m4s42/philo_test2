@@ -6,7 +6,7 @@
 /*   By: thbasse <thbasse@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 08:00:13 by thbasse           #+#    #+#             */
-/*   Updated: 2025/01/27 10:28:33 by thbasse          ###   ########.fr       */
+/*   Updated: 2025/01/27 23:58:38 by thbasse          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,9 @@ int	main(int argc, char **argv)
 	t_philo		*philos;
 	pthread_t	*ids;
 
+	info = NULL;
+	philos = NULL;
+	ids = NULL;
 	if (check_rules(argc, argv) == false)
 		return (1);
 	if (intitialization(argv, &info, &philos, &ids) == false)

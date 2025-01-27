@@ -1,6 +1,6 @@
 NAME	:= philo
 CC		:= cc
-# FLAGS	:= -Wall -Werror -Wextra -g3 -fsanitize=thread -pthread
+# FLAGS	:= -Wall -Werror -Wextra -fsanitize=thread -pthread
 FLAGS	:= -Wall -Werror -Wextra -g3 -pthread
 
 Black	:= \033[0;30m
@@ -18,6 +18,7 @@ OBJ_DIR := objs/
 SRCS := \
 	$(SRC_DIR)main.c \
 	$(SRC_DIR)init.c \
+	$(SRC_DIR)init_utils.c \
 	$(SRC_DIR)rules_utils.c \
 	$(SRC_DIR)rules.c \
 	$(SRC_DIR)thread_utils.c \

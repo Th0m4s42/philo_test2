@@ -6,7 +6,7 @@
 /*   By: thbasse <thbasse@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 08:03:49 by thbasse           #+#    #+#             */
-/*   Updated: 2025/01/27 09:20:11 by thbasse          ###   ########.fr       */
+/*   Updated: 2025/01/27 23:56:27 by thbasse          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ static t_philo	*init_philo_list(t_info *info)
 		tmp = init_philo(info);
 		if (tmp == NULL)
 		{
-			ft_free(first);
+			free_linked_list(first);
 			return (NULL);
 		}
 		tmp->id = i + 1;
@@ -90,7 +90,7 @@ static t_info	*init_info(char **arg)
 	info->time_to_death = (size_t)ft_atol(arg[2]);
 	info->time_to_eat = (size_t)ft_atol(arg[3]);
 	info->time_to_sleep = (size_t)ft_atol(arg[4]);
-	if (arg[5] == NULL)
+	if (arg[5] == NULL || (int)ft_atol(arg[5]) == 0)
 		info->nb_of_meal = -1;
 	else
 		info->nb_of_meal = (int)ft_atol(arg[5]);
@@ -102,10 +102,10 @@ bool	intitialization(char **arg, t_info **info, t_philo **philos,
 							pthread_t **ids)
 {
 	*info = init_info(arg);
-	if (info == NULL)
+	if (info == NULL || *info == NULL)
 		return (false);
 	*philos = init_philo_list(*info);
-	if (philos == NULL)
+	if (philos == NULL || *philos == NULL)
 	{
 		free_struct(*info, NULL, NULL);
 		return (false);
