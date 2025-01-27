@@ -14,7 +14,7 @@
 
 bool	check_exit(t_philo *philo)
 {
-	int i;
+	int	i;
 
 	pthread_mutex_lock(&philo->info->all_ate_mutex);
 	if (philo->info->nb_of_meal == -1)
@@ -26,17 +26,13 @@ bool	check_exit(t_philo *philo)
 	if (check_death(philo) == true)
 		return (true);
 	i = 0;
-	while (i <= philo->info->nb_of_phi)
+	while (i++ <= philo->info->nb_of_phi)
 	{
 		pthread_mutex_lock(&philo->meal_mutex);
 		if (philo->meal_count < philo->info->nb_of_meal)
-		{
-			pthread_mutex_unlock(&philo->meal_mutex);
-			return (false);
-		}
+			return (pthread_mutex_unlock(&philo->meal_mutex), false);
 		pthread_mutex_unlock(&philo->meal_mutex);
 		philo = philo->next;
-		i++;
 	}
 	pthread_mutex_lock(&philo->info->all_ate_mutex);
 	philo->info->all_ate = true;
@@ -74,9 +70,9 @@ bool	check_death(t_philo *philo)
 			return (true);
 		}
 		philo->info->someone_dead = true;
-		
 		pthread_mutex_lock(&philo->info->print_mutex);
-		printf("%zu %d died\n", get_time_ms() - philo->info->time_start, philo->id);
+		printf("%zu %d died\n", get_time_ms() - philo->info->time_start,
+			philo->id);
 		pthread_mutex_unlock(&philo->info->print_mutex);
 		pthread_mutex_unlock(&philo->info->death_mutex);
 		return (true);

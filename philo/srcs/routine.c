@@ -12,40 +12,39 @@
 
 #include <philo.h>
 
-static bool	grab_forks(pthread_mutex_t *m1, pthread_mutex_t *m2 , t_philo *philo)
+static bool	grab_forks(pthread_mutex_t *m1, pthread_mutex_t *m2, t_philo *phil)
 {
-	if(check_death(philo) == true)
-		return (false);
-	if (philo->id % 2 == 0)
+	if (phil->id % 2 == 0)
 	{
 		pthread_mutex_lock(m2);
-		print_action(philo, "has taken a fork");
-		if (check_death(philo) == true)
+		print_action(phil, "has taken a fork");
+		if (check_death(phil) == true)
 		{
 			pthread_mutex_unlock(m2);
 			return (false);
 		}
 		pthread_mutex_lock(m1);
-		print_action(philo, "has taken a fork");
+		print_action(phil, "has taken a fork");
 	}
 	else
 	{
 		pthread_mutex_lock(m1);
-		print_action(philo, "has taken a fork");
-		if (check_death(philo) == true)
+		print_action(phil, "has taken a fork");
+		if (check_death(phil) == true)
 		{
 			pthread_mutex_unlock(m1);
 			return (false);
 		}
 		pthread_mutex_lock(m2);
-		print_action(philo, "has taken a fork");
+		print_action(phil, "has taken a fork");
 	}
 	return (true);
 }
 
 static bool	try_to_eat(t_philo *philo)
 {
-	if (grab_forks(&philo->fork, &philo->next->fork, philo) == false)
+	if (check_death(philo) == true
+		|| grab_forks(&philo->fork, &philo->next->fork, philo) == false)
 		return (false);
 	if (check_death(philo) == true)
 	{
@@ -90,16 +89,12 @@ bool	kitkat(t_philo *philo)
 	size_t	timer;
 
 	timer = 0;
-
 	if (philo->info->time_to_eat > philo->info->time_to_sleep)
 		timer = philo->info->time_to_eat - philo->info->time_to_sleep;
-	
 	if (philo->info->nb_of_phi % 2 == 1 && philo->id % 2 == 0)
-		timer*=2;
+		timer *= 2;
 	if (ft_sleep(philo, timer + 5) == false)
 		return (false);
-	
-	
 	return (true);
 }
 
@@ -113,7 +108,6 @@ void	*routine(void *param)
 	print_action(philo, "is thinking");
 	if (philo->id % 2 == 1)
 		usleep(1000);
-		// kitkat(philo);
 	while (1)
 	{
 		if (try_to_eat(philo) == false)
@@ -121,8 +115,9 @@ void	*routine(void *param)
 		if (check_death(philo) == true || check_all_ate(philo) == true)
 			break ;
 		print_action(philo, "is sleeping");
-		if (ft_sleep(philo, philo->info->time_to_sleep) == false || check_all_ate(philo) == true)
-			break;
+		if (ft_sleep(philo, philo->info->time_to_sleep) == false
+			|| check_all_ate(philo) == true)
+			break ;
 		print_action(philo, "is thinking");
 		if (check_death(philo) == true || check_all_ate(philo) == true)
 			break ;
