@@ -31,6 +31,7 @@ typedef struct s_info
 	size_t			time_to_death;
 	size_t			time_to_eat;
 	size_t			time_to_sleep;
+	size_t			time_to_think;
 	int				nb_of_meal;
 	size_t			time_start;
 	pthread_mutex_t	print_mutex;
@@ -74,7 +75,7 @@ void	init_functionarray(t_array (*funct_array)[5]);
 
 /* *****************************thread*************************************** */
 
-bool	join_threads(pthread_t *ids, int nb_philo, t_philo *first);
+bool	join_threads(pthread_t *ids, int nb_philo);
 bool	init_thread_array(pthread_t **ids, t_info *info, t_philo *first);
 
 /* *****************************routine************************************** */

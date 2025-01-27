@@ -59,11 +59,10 @@ int	main(int argc, char **argv)
 		return (1);
 	if (intitialization(argv, &info, &philos, &ids) == false)
 	{
-		if (check_exit(philos) == true)
-			free_struct(info, philos, ids);
+		free_struct(info, philos, ids);
 		return (1);
 	}
-	if (join_threads(ids, info->nb_of_phi, philos) == false)
+	if (join_threads(ids, info->nb_of_phi) == false)
 	{
 		free_struct(info, philos, ids);
 		return (1);

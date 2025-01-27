@@ -16,20 +16,36 @@ static bool	grab_forks(pthread_mutex_t *m1, pthread_mutex_t *m2 , t_philo *philo
 {
 	if(check_death(philo) == true)
 		return (false);
-	if(m1 <= m2)
+	if (philo->id % 2 == 1)
 	{
-		pthread_mutex_lock(m1);
-		print_action(philo, "has taken a fork");
 		pthread_mutex_lock(m2);
+		print_action(philo, "has taken a fork");
+		pthread_mutex_lock(m1);
 		print_action(philo, "has taken a fork");
 	}
 	else
 	{
-		pthread_mutex_lock(m2);
-		print_action(philo, "has taken a fork");
 		pthread_mutex_lock(m1);
 		print_action(philo, "has taken a fork");
+		pthread_mutex_lock(m2);
+		print_action(philo, "has taken a fork");
 	}
+	// if(m1 < m2)
+	// {
+	// 	pthread_mutex_lock(m1);
+	// 	print_action(philo, "has taken a fork");
+	// 	pthread_mutex_lock(m2);
+	// 	print_action(philo, "has taken a fork");
+	// 	// printf("%zu \n", get_time_ms() - philo->last_meal);
+	// }
+	// else
+	// {
+	// 	pthread_mutex_lock(m2);
+	// 	print_action(philo, "has taken a fork");
+	// 	pthread_mutex_lock(m1);
+	// 	print_action(philo, "has taken a fork");
+	// 	// printf("%zu \n", get_time_ms() - philo->last_meal);
+	// }
 	return (true);
 }
 
@@ -69,6 +85,18 @@ static bool	solo_philo(t_philo *philo)
 	return (false);
 }
 
+void	kitkat(t_philo *philo)
+{
+	size_t	timer;
+
+	if (philo->info->nb_of_phi % 2 == 0)
+		return ;
+	timer = 0;
+	if (philo->info->time_to_eat > philo->info->time_to_sleep)
+		timer = philo->info->time_to_eat + 1 - philo->info->time_to_sleep - 2;
+	usleep((timer * 1000) + 2000);
+}
+
 void	*routine(void *param)
 {
 	t_philo	*philo;
@@ -76,12 +104,11 @@ void	*routine(void *param)
 	philo = (t_philo *)param;
 	if (solo_philo(philo) == true)
 		return (NULL);
-	if ((philo->id % 2 != 0) || (philo->info->nb_of_phi % 2 != 0
-			&& philo->id == philo->info->nb_of_phi))
-	{
-		print_action(philo, "is thinking");
-		usleep(1000);
-	}
+	print_action(philo, "is thinking");
+	if (philo->id % 2 == 0)
+		usleep(500);
+	if (philo->info->nb_of_phi == philo->id)
+		usleep(philo->info->time_to_eat);
 	while (1)
 	{
 		if (try_to_eat(philo) == false)
@@ -93,6 +120,7 @@ void	*routine(void *param)
 		print_action(philo, "is thinking");
 		if (check_death(philo) == true)
 			break ;
+		kitkat(philo);
 	}
 	return (NULL);
 }
